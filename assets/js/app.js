@@ -29,10 +29,10 @@
     destination = $("#destination-input").val().trim();
     firstTrainTime = $("#firstTrainTime-input").val().trim();
     frequency = $("#frequency-input").val().trim();
-    console.log(trainName);
-    console.log(destination);
-    console.log(firstTrainTime);
-    console.log(frequency);
+    //console.log(trainName);
+    //console.log(destination);
+    //console.log(firstTrainTime);
+    //console.log(frequency);
 
     $("#train-input").val("");
     $("#destination-input").val("");
@@ -51,7 +51,7 @@
   //FIREBASE
   //save data with a child added and snapshot
   database.ref().on("child_added", function(childSnapshot){
-    console.log(childSnapshot.val());
+    //console.log(childSnapshot.val());
 
     trainName = childSnapshot.val().trainName;
     destination = childSnapshot.val().destination;
@@ -60,19 +60,32 @@
 
     //create a variable to invoke momentJS and capture firstTrainTime and convert to time
     var firstTrainTimeMoment = moment(firstTrainTime, "HH:mm");
-    console.log(firstTrainTimeMoment);
+    //console.log(firstTrainTimeMoment);
 
     //connect to current time
     var currentTime = moment();
-    console.log(currentTime);
+    //console.log(currentTime);
 
     var arrivalMinute = currentTime.diff(firstTrainTimeMoment, 'minutes');
-    var prevMinute  = arrivalMinute % frequency;
-    var 
-  })
+    var prevMinute = arrivalMinute % frequency;
+    var awayTrain = frequency - prevMinute;
+    //console.log(arrivalMinute);
+    //console.log(prevMinute);
+    //console.log(awayTrain);
 
-
-  //hey jquery, get the user input from the form and give them a value
+    var nextArrival = currentTime.add(awayTrain, 'minutes');
+    var arrivalTime = nextArrival.format("HH:mm");
+    console.log(nextArrival);
+    console.log(arrivalTime); 
+        
+    //hey jquery, get the user input from the form and give them a value
 
   //add user inputs to the database
-  //$("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + awayTrain + "</td>");
+  $("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + awayTrain + "</td>");
+
+ 
+
+
+}, function(errorObject) {
+  console.log("Errors handled: " + errorObject.code);
+});
