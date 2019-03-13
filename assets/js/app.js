@@ -75,17 +75,15 @@
 
     var nextArrival = currentTime.add(awayTrain, 'minutes');
     var arrivalTime = nextArrival.format("HH:mm");
-    console.log(nextArrival);
-    console.log(arrivalTime); 
+    //console.log(nextArrival);
+    //console.log(arrivalTime); 
         
     //hey jquery, get the user input from the form and give them a value
 
   //add user inputs to the database
-  $("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + awayTrain + "</td>");
+  $("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + awayTrain + "</td>");
 
  
 
 
-}, function(errorObject) {
-  console.log("Errors handled: " + errorObject.code);
 });
