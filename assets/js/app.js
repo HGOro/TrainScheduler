@@ -4,7 +4,7 @@
     authDomain: "train-scheduler-d99c0.firebaseapp.com",
     databaseURL: "https://train-scheduler-d99c0.firebaseio.com",
     projectId: "train-scheduler-d99c0",
-    storageBucket: "",
+    storageBucket: "train-scheduler-d99c0.appspot.com",
     messagingSenderId: "316330873885"
   };
 
@@ -12,6 +12,7 @@
 
   //create a variable to reference the database
   var database = firebase.database();
+  //console.log(database)
 
   //initial values
   var trainName = "";
@@ -21,30 +22,30 @@
 
   //when submit button(#addTrain) is clicked, store and retrieve user input
   $("#addTrain").on("click", function(event){
-    //prevent default
-    event.preventDefault();
+      //prevent default
+      event.preventDefault();
+      
+      //store and retrieve user input
+      trainName = $("#train-input").val().trim();
+      destination = $("#destination-input").val().trim();
+      firstTrainTime = $("#firstTrainTime-input").val().trim();
+      frequency = $("#frequency-input").val().trim();
+      //console.log(trainName);
+      //console.log(destination);
+      //console.log(firstTrainTime);
+      //console.log(frequency);
 
-    //store and retrieve user input
-    trainName = $("#train-input").val().trim();
-    destination = $("#destination-input").val().trim();
-    firstTrainTime = $("#firstTrainTime-input").val().trim();
-    frequency = $("#frequency-input").val().trim();
-    //console.log(trainName);
-    //console.log(destination);
-    //console.log(firstTrainTime);
-    //console.log(frequency);
+      $("#train-input").val("");
+      $("#destination-input").val("");
+      $("#firstTrainTime-input").val("");
+      $("#frequency-input").val("");
 
-    $("#train-input").val("");
-    $("#destination-input").val("");
-    $("#firstTrainTime-input").val("");
-    $("#frequency-input").val("");
-
-    database.ref().push({
-        trainName: trainName,
-        destination: destination,
-        firstTrainTime: firstTrainTime,
-        frequency: frequency,
-    });
+      database.ref().push({
+          trainName: trainName,
+          destination: destination,
+          firstTrainTime: firstTrainTime,
+          frequency: frequency,
+      });
 
   });
 
@@ -83,7 +84,17 @@
   //add user inputs to the database
   $("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + awayTrain + "</td>");
 
- 
+  //another attempt at adding user input to database and table
+    //$("#addTrain").append($("<tr>'")
+    //  .append($("<td>").text(trainName))
+    //  .append($("<td>").text(destination))
+    //  .append($("<td>").text(frequency))
+    //  .append($("<td>").text(arrivalTime))
+    //  .append($("<td>").text(awayTrain))
+    //  );
+    
+}, function(errorObject) {
+  console.log("Errors handled: " + errorObject.code);
 
 
 });
