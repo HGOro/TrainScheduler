@@ -14,77 +14,101 @@
   var database = firebase.database();
   //console.log(database)
 
-  //initial values
-  var trainName = "";
-  var destination = "";
-  var firstTrainTime = "";
-  var frequency = "";
+   //initial values
+  //var trainName = "";
+  //var destination = "";
+  //var firstTrainTime = "";
+  //var frequency = "";
 
   //when submit button(#addTrain) is clicked, store and retrieve user input
-  $("#addTrain").on("click", function(event){
+  $("#addTrain").on("click", function(){
       //prevent default
       event.preventDefault();
       
       //store and retrieve user input
-      trainName = $("#train-input").val().trim();
-      destination = $("#destination-input").val().trim();
-      firstTrainTime = $("#firstTrainTime-input").val().trim();
-      frequency = $("#frequency-input").val().trim();
-      //console.log(trainName);
-      //console.log(destination);
-      //console.log(firstTrainTime);
-      //console.log(frequency);
+      var trainName = $("#train-input").val().trim();
+      var destination = $("#destination-input").val().trim();
+      var firstTrainTime = $("#firstTrainTime-input").val().trim();
+      var frequency = $("#frequency-input").val().trim();
+      console.log(trainName);
+      console.log(destination);
+      console.log(firstTrainTime);
+      console.log(frequency);
 
+      var newTrain = {
+        name: trainName,
+        destination: destination,
+        first: firstTrainTime,
+        frequency: frequency
+      }
+
+      database.ref().push(newTrain);
+
+      //clear user input form
       $("#train-input").val("");
       $("#destination-input").val("");
       $("#firstTrainTime-input").val("");
       $("#frequency-input").val("");
 
-      database.ref().push({
-          trainName: trainName,
-          destination: destination,
-          firstTrainTime: firstTrainTime,
-          frequency: frequency,
-      });
-
-  });
+      //first attempt WROOOONG
+      //database.ref().push({
+      //    trainName: trainName,
+      //    destination: destination,
+      //    firstTrainTime: firstTrainTime,
+      //    frequency: frequency,
+      //});
+});
 
   //FIREBASE
   //save data with a child added and snapshot
   database.ref().on("child_added", function(childSnapshot){
     //console.log(childSnapshot.val());
 
-    trainName = childSnapshot.val().trainName;
-    destination = childSnapshot.val().destination;
-    firstTrainTime = childSnapshot.val().firstTrainTime;
-    frequency = childSnapshot.val().frequency;
-
-    //create a variable to invoke momentJS and capture firstTrainTime and convert to time
-    var firstTrainTimeMoment = moment(firstTrainTime, "HH:mm");
-    //console.log(firstTrainTimeMoment);
+    var trainName = childSnapshot.val().name;
+    var destination = childSnapshot.val().destination;
+    var firstTrainTime = childSnapshot.val().first;
+    var frequency = childSnapshot.val().frequency;
+    //console.log(childSnapshot.val().trainName);    
+    //console.log(childSnapshot.val().destination);
+    //console.log(childSnapshot.val().firstTrainTime);
+    //console.log(childSnapshot.val().frequency);
 
     //connect to current time
     var currentTime = moment();
-    //console.log(currentTime);
+    //console.log(moment(currentTime));
 
-    var arrivalMinute = currentTime.diff(firstTrainTimeMoment, 'minutes');
+    //create a variable to invoke momentJS and capture firstTrainTime and convert to time
+    //subtract 1 year. Cuz they said so.
+    var firstTrainTimeMoment = moment(firstTrainTime, "hh:mm A").subtract(1, "years");
+    //console.log(firstTrainTimeMoment);
+
+    //time difference, minutes between arrival times
+    var arrivalMinute = moment().diff(moment(firstTrainTimeMoment), "minutes");
+    //console.log("time difference: " + arrivalMinute);
+    
+    //
     var prevMinute = arrivalMinute % frequency;
+    //console.log(prevMinute)
+
+    //minutes away
     var awayTrain = frequency - prevMinute;
-    //console.log(arrivalMinute);
-    //console.log(prevMinute);
     //console.log(awayTrain);
 
-    var nextArrival = currentTime.add(awayTrain, 'minutes');
-    var arrivalTime = nextArrival.format("HH:mm");
-    //console.log(nextArrival);
+    var nextArrival = moment().add(awayTrain, 'minutes');
+    console.log("Next Arrival: " + moment(nextArrival).format("hh:mm A"));
+
+    //i guess this wasn't needed after all
+    //var arrivalTime = nextArrival.format("HH:mm");
     //console.log(arrivalTime); 
         
     //hey jquery, get the user input from the form and give them a value
 
   //add user inputs to the database
-  $("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + awayTrain + "</td>");
+  $(".table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + moment(nextArrival).format("hh:mm A") + "</td><td>" + awayTrain + "</td>");
 
-  //another attempt at adding user input to database and table
+  //$("#addTrain").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + awayTrain + "</td>");
+
+  //first attempt at adding user input to database and table
     //$("#addTrain").append($("<tr>'")
     //  .append($("<td>").text(trainName))
     //  .append($("<td>").text(destination))
@@ -93,8 +117,7 @@
     //  .append($("<td>").text(awayTrain))
     //  );
     
-}, function(errorObject) {
-  console.log("Errors handled: " + errorObject.code);
+  });//, function(errorObject) {
+  //console.log("Errors handled: " + errorObject.code);
 
 
-});
